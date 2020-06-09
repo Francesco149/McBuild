@@ -1,0 +1,342 @@
+diff --git a/McEngine/src/Engine/Engine.cpp b/McEngine/src/Engine/Engine.cpp
+index 8b9c1c3..ac1627b 100644
+--- a/McEngine/src/Engine/Engine.cpp
++++ b/McEngine/src/Engine/Engine.cpp
+@@ -44,8 +44,12 @@
+ //	Include App here  //
+ //********************//
+ 
++#ifdef MCENGINE_APP_HEADER
++#include MCENGINE_APP_HEADER
++#else
+ //#include "Osu.h"
+ #include "FrameworkTest.h"
++#endif
+ 
+ 
+ 
+@@ -258,9 +262,13 @@ void Engine::loadApp()
+ 	//	Load App here  //
+ 	//*****************//
+ 
++#ifdef MCENGINE_APP
++	m_app = new MCENGINE_APP();
++#else
+ 	//m_app = new Osu();
+ 
+ 	m_app = new FrameworkTest();
++#endif
+ 
+ 
+ 
+diff --git a/McEngine/src/Engine/Font.cpp b/McEngine/src/Engine/Font.cpp
+index f40aa73..dfbf4d1 100644
+--- a/McEngine/src/Engine/Font.cpp
++++ b/McEngine/src/Engine/Font.cpp
+@@ -13,11 +13,19 @@
+ #include "ConVar.h"
+ 
+ #include <ft2build.h>
++#ifdef MCENGINE_USE_SYSTEM_FREETYPE
++#include <freetype/freetype.h>
++#include <freetype/ftglyph.h>
++#include <freetype/ftbitmap.h>
++#include <freetype/ftoutln.h>
++#include <freetype/fttrigon.h>
++#else
+ #include <freetype.h>
+ #include <ftglyph.h>
+ #include <ftbitmap.h>
+ #include <ftoutln.h>
+ #include <fttrigon.h>
++#endif
+ 
+ ConVar r_drawstring_max_string_length("r_drawstring_max_string_length", 65536, "maximum number of characters per call, sanity/memory buffer limit");
+ ConVar r_debug_drawstring_unbind("r_debug_drawstring_unbind", false);
+diff --git a/McEngine/src/Engine/Input/OpenVRController.h b/McEngine/src/Engine/Input/OpenVRController.h
+index cb1ed1b..ad302db 100644
+--- a/McEngine/src/Engine/Input/OpenVRController.h
++++ b/McEngine/src/Engine/Input/OpenVRController.h
+@@ -12,7 +12,11 @@
+ 
+ #ifdef MCENGINE_FEATURE_OPENVR
+ 
++#ifdef MCENGINE_USE_SYSTEM_OPENVR
++#include <openvr.h>
++#else
+ #include <openvr_mingw.hpp>
++#endif
+ 
+ #endif
+ 
+diff --git a/McEngine/src/Engine/Main/EngineFeatures.h b/McEngine/src/Engine/Main/EngineFeatures.h
+index 93bb55e..485bd7d 100644
+--- a/McEngine/src/Engine/Main/EngineFeatures.h
++++ b/McEngine/src/Engine/Main/EngineFeatures.h
+@@ -11,17 +11,17 @@
+ /*
+  * std::thread/std::mutex support
+  */
+-#define MCENGINE_FEATURE_MULTITHREADING
++//#define MCENGINE_FEATURE_MULTITHREADING
+ 
+ /*
+  * pthread support
+  */
+-#define MCENGINE_FEATURE_PTHREADS
++//#define MCENGINE_FEATURE_PTHREADS
+ 
+ /*
+  * OpenGL graphics (Desktop, legacy + modern)
+  */
+-#define MCENGINE_FEATURE_OPENGL
++//#define MCENGINE_FEATURE_OPENGL
+ 
+ /*
+  * OpenGL graphics (Mobile, ES/EGL)
+@@ -41,7 +41,7 @@
+ /*
+  * BASS sound
+  */
+-#define MCENGINE_FEATURE_SOUND
++//#define MCENGINE_FEATURE_SOUND
+ 
+ /*
+  * BASS WASAPI sound (Windows only)
+diff --git a/McEngine/src/Engine/NetworkHandler.cpp b/McEngine/src/Engine/NetworkHandler.cpp
+index 1e3f09f..c391e12 100644
+--- a/McEngine/src/Engine/NetworkHandler.cpp
++++ b/McEngine/src/Engine/NetworkHandler.cpp
+@@ -14,7 +14,11 @@
+ 
+ #ifdef MCENGINE_FEATURE_NETWORKING
+ 
++#ifdef MCENGINE_USE_SYSTEM_CURL
++#include <curl/curl.h>
++#else
+ #include <curl.h>
++#endif
+ 
+ #endif
+ 
+diff --git a/McEngine/src/Engine/OpenCLInterface.cpp b/McEngine/src/Engine/OpenCLInterface.cpp
+index 99f5563..9f28aab 100644
+--- a/McEngine/src/Engine/OpenCLInterface.cpp
++++ b/McEngine/src/Engine/OpenCLInterface.cpp
+@@ -15,7 +15,11 @@
+ #ifdef MCENGINE_FEATURE_OPENCL
+ 
+ #include "OpenGLHeaders.h"
++#ifdef MCENGINE_USE_SYSTEM_OPENCL
++#include <CL/cl_gl.h>
++#else
+ #include "cl_gl.h"
++#endif
+ 
+ #endif
+ 
+diff --git a/McEngine/src/Engine/OpenCLInterface.h b/McEngine/src/Engine/OpenCLInterface.h
+index 587fdca..491478b 100644
+--- a/McEngine/src/Engine/OpenCLInterface.h
++++ b/McEngine/src/Engine/OpenCLInterface.h
+@@ -12,7 +12,11 @@
+ 
+ #ifdef MCENGINE_FEATURE_OPENCL
+ 
++#ifdef MCENGINE_USE_SYSTEM_OPENCL
++#include <CL/cl.h>
++#else
+ #include "cl.h"
++#endif
+ 
+ #endif
+ 
+diff --git a/McEngine/src/Engine/OpenVRInterface.cpp b/McEngine/src/Engine/OpenVRInterface.cpp
+index 70ebfe7..f4409c0 100644
+--- a/McEngine/src/Engine/OpenVRInterface.cpp
++++ b/McEngine/src/Engine/OpenVRInterface.cpp
+@@ -1045,6 +1045,7 @@ void OpenVRInterface::renderScene(Graphics *g,  Matrix4 &matCurrentEye, Matrix4
+ 	///g->setCulling(true);
+ 	*/
+ 
++#ifndef MCENGINE_USE_SYSTEM_OPENVR
+ 	// debug controllers
+ 	const bool bIsInputCapturedByAnotherProcess = m_pHMD->IsInputFocusCapturedByAnotherProcess();
+ 	if (vr_debug_controllers.getBool())
+@@ -1063,6 +1064,10 @@ void OpenVRInterface::renderScene(Graphics *g,  Matrix4 &matCurrentEye, Matrix4
+ 			m_controllerAxisShader->disable();
+ 		}
+ 	}
++#else
++	// TODO: why is this API missing from latest openvr?
++	const bool bIsInputCapturedByAnotherProcess = false;
++#endif
+ 
+ 	// internal rendermodel rendering (all connected tracked devices which have models)
+ 	m_renderModelShader->enable();
+@@ -1704,7 +1709,11 @@ void OpenVRInterface::showKeyboardEx(UString description, UString text)
+ 
+ #if defined(MCENGINE_FEATURE_OPENVR)
+ 
++#ifdef MCENGINE_USE_SYSTEM_OPENVR
++	vr::EVROverlayError res = vr::VROverlay()->ShowKeyboard(vr::EGamepadTextInputMode::k_EGamepadTextInputModeNormal, vr::EGamepadTextInputLineMode::k_EGamepadTextInputLineModeSingleLine, 0, description.toUtf8(), 256, text.toUtf8(), false);
++#else
+ 	vr::EVROverlayError res = vr::VROverlay()->ShowKeyboard(vr::EGamepadTextInputMode::k_EGamepadTextInputModeNormal, vr::EGamepadTextInputLineMode::k_EGamepadTextInputLineModeSingleLine, description.toUtf8(), 256, text.toUtf8(), false, 0);
++#endif
+ 
+ 	if (res != vr::EVROverlayError::VROverlayError_None)
+ 		debugLog("OpenVR Error: VROverlay::ShowKeyboard() error %i!!!\n", (int)res);
+@@ -1788,7 +1797,11 @@ bool OpenVRInterface::hasInputFocus()
+ {
+ #if defined(MCENGINE_FEATURE_OPENVR)
+ 
+-	return m_bReady && m_pHMD != NULL && !m_pHMD->IsInputFocusCapturedByAnotherProcess();
++	return m_bReady && m_pHMD != NULL
++#ifndef MCENGINE_USE_SYSTEM_OPENVR
++		&& !m_pHMD->IsInputFocusCapturedByAnotherProcess()
++#endif
++		;
+ 
+ #else
+ 
+@@ -1814,8 +1827,10 @@ bool OpenVRInterface::isLIVReady()
+ 
+ void OpenVRInterface::updateControllerAxes()
+ {
++#ifndef MCENGINE_USE_SYSTEM_OPENVR
+ 	// don't update controller axis lines if we don't have input focus
+ 	if (m_pHMD->IsInputFocusCapturedByAnotherProcess()) return;
++#endif
+ 
+ 	std::vector<float> vertdataarray;
+ 
+@@ -2156,7 +2171,9 @@ bool OpenVRInterface::updateMatrixPoses()
+ 			// update controller matrices
+ 			if (isConnected && isController)
+ 			{
++#ifndef MCENGINE_USE_SYSTEM_OPENVR
+ 				if (!m_pHMD->IsInputFocusCapturedByAnotherProcess())
++#endif
+ 				{
+ 					if (nDevice == m_pHMD->GetTrackedDeviceIndexForControllerRole(OpenVRController::roleIdToOpenVR(m_controllerLeft->getRole())))
+ 						m_controllerLeft->updateMatrixPose(m_rmat4DevicePose[nDevice]);
+@@ -2354,7 +2371,7 @@ void OpenVRInterface::saveFakeCamera()
+ 	vr_spectator_camera_position.setValue(UString::format("%f %f %f", m_fakeCamera->getPos().x, m_fakeCamera->getPos().y, m_fakeCamera->getPos().z));
+ 	vr_spectator_camera_rotation.setValue(UString::format("%f %f %f", m_fakeCamera->getYaw(), m_fakeCamera->getPitch(), m_fakeCamera->getRoll()));
+ 
+-	std::ofstream out("cfg/vrspectatorcamera.cfg");
++	std::ofstream out(MCENGINE_DATA_DIR "/cfg/vrspectatorcamera.cfg");
+ 	if (!out.good())
+ 	{
+ 		debugLog("OpenVRInterface::saveFakeCamera() failed!\n");
+diff --git a/McEngine/src/Engine/OpenVRInterface.h b/McEngine/src/Engine/OpenVRInterface.h
+index ee173b7..2d1ee95 100644
+--- a/McEngine/src/Engine/OpenVRInterface.h
++++ b/McEngine/src/Engine/OpenVRInterface.h
+@@ -17,7 +17,11 @@
+ 
+ #if defined(MCENGINE_FEATURE_OPENVR)
+ 
++#ifdef MCENGINE_USE_SYSTEM_OPENVR
++#include <openvr.h>
++#else
+ #include <openvr_mingw.hpp>
++#endif
+ 
+ #endif
+ 
+diff --git a/McEngine/src/Engine/Platform/OpenGLHeaders.h b/McEngine/src/Engine/Platform/OpenGLHeaders.h
+index 1244e49..6b83a59 100644
+--- a/McEngine/src/Engine/Platform/OpenGLHeaders.h
++++ b/McEngine/src/Engine/Platform/OpenGLHeaders.h
+@@ -29,8 +29,12 @@
+ 
+ #ifdef __linux__
+ 
++#ifdef MCENGINE_USE_SYSTEM_GLEW
++#include <GL/glew.h>
++#else
+ #define GLEW_STATIC
+ #include <glew.h>
++#endif
+ #include <GL/gl.h>
+ #include <GL/glx.h>
+ #include <GL/glu.h>
+diff --git a/McEngine/src/Engine/ResourceManager.cpp b/McEngine/src/Engine/ResourceManager.cpp
+index f1c3ff4..4c69f55 100644
+--- a/McEngine/src/Engine/ResourceManager.cpp
++++ b/McEngine/src/Engine/ResourceManager.cpp
+@@ -59,10 +59,10 @@ const char *ResourceManager::PATH_DEFAULT_SHADERS = "romfs:/shaders/";
+ 
+ #else
+ 
+-const char *ResourceManager::PATH_DEFAULT_IMAGES = "materials/";
+-const char *ResourceManager::PATH_DEFAULT_FONTS = "fonts/";
+-const char *ResourceManager::PATH_DEFAULT_SOUNDS = "sounds/";
+-const char *ResourceManager::PATH_DEFAULT_SHADERS = "shaders/";
++const char *ResourceManager::PATH_DEFAULT_IMAGES = MCENGINE_DATA_DIR "materials/";
++const char *ResourceManager::PATH_DEFAULT_FONTS = MCENGINE_DATA_DIR "fonts/";
++const char *ResourceManager::PATH_DEFAULT_SOUNDS = MCENGINE_DATA_DIR "sounds/";
++const char *ResourceManager::PATH_DEFAULT_SHADERS = MCENGINE_DATA_DIR "shaders/";
+ 
+ #endif
+ 
+diff --git a/McEngine/src/Engine/ResourceManager.h b/McEngine/src/Engine/ResourceManager.h
+index c2132df..0f3d1b7 100644
+--- a/McEngine/src/Engine/ResourceManager.h
++++ b/McEngine/src/Engine/ResourceManager.h
+@@ -18,6 +18,10 @@
+ #include "TextureAtlas.h"
+ #include "VertexArrayObject.h"
+ 
++#ifndef MCENGINE_DATA_DIR
++#define MCENGINE_DATA_DIR
++#endif
++
+ class ResourceManagerLoaderThread;
+ 
+ class ResourceManager
+diff --git a/McEngine/src/Engine/SoundEngine.cpp b/McEngine/src/Engine/SoundEngine.cpp
+index dd320d9..fc88662 100644
+--- a/McEngine/src/Engine/SoundEngine.cpp
++++ b/McEngine/src/Engine/SoundEngine.cpp
+@@ -18,6 +18,10 @@
+ #ifdef MCENGINE_FEATURE_SOUND
+ 
+ #include <bass.h>
++// removed from latest headers. not sure if it's handled at all
++#ifndef BASS_CONFIG_MP3_OLDGAPS
++#define BASS_CONFIG_MP3_OLDGAPS 68
++#endif
+ 
+ #endif
+ 
+diff --git a/McEngine/src/Engine/VulkanInterface.h b/McEngine/src/Engine/VulkanInterface.h
+index 8e49080..f4cff5a 100644
+--- a/McEngine/src/Engine/VulkanInterface.h
++++ b/McEngine/src/Engine/VulkanInterface.h
+@@ -22,7 +22,11 @@
+ 
+ #endif
+ 
++#ifdef MCENGINE_USE_SYSTEM_VULKAN
++#include <vulkan/vulkan.h>
++#else
+ #include <vulkan.h>
++#endif
+ 
+ #endif
+ 
+diff --git a/McEngine/src/GUI/Windows/Console.cpp b/McEngine/src/GUI/Windows/Console.cpp
+index 744f6d9..75e526d 100644
+--- a/McEngine/src/GUI/Windows/Console.cpp
++++ b/McEngine/src/GUI/Windows/Console.cpp
+@@ -25,7 +25,7 @@
+ #include "CBaseUIButton.h"
+ #include "CBaseUILabel.h"
+ 
+-#define CFG_FOLDER "cfg/"
++#define CFG_FOLDER MCENGINE_DATA_DIR "cfg/"
+ 
+ #define CONSOLE_BORDER 6
+ 

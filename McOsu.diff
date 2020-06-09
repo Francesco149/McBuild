@@ -1,0 +1,92 @@
+diff --git a/src/App/Osu/OsuOptionsMenu.cpp b/src/App/Osu/OsuOptionsMenu.cpp
+index 79c4f98..3f80ab2 100644
+--- a/src/App/Osu/OsuOptionsMenu.cpp
++++ b/src/App/Osu/OsuOptionsMenu.cpp
+@@ -2539,7 +2539,7 @@ void OsuOptionsMenu::onResolutionSelect()
+ 
+     // get custom resolutions
+     std::vector<Vector2> customResolutions;
+-    std::ifstream customres("cfg/customres.cfg");
++    std::ifstream customres(MCENGINE_DATA_DIR "cfg/customres.cfg");
+ 	std::string curLine;
+ 	while (std::getline(customres, curLine))
+ 	{
+@@ -3726,7 +3726,7 @@ void OsuOptionsMenu::save()
+ 
+ 	debugLog("Osu: Saving user config file ...\n");
+ 
+-	UString userConfigFile = "cfg/";
++	UString userConfigFile = MCENGINE_DATA_DIR "cfg/";
+ 	userConfigFile.append(OSU_CONFIG_FILE_NAME);
+ 	userConfigFile.append(".cfg");
+ 
+diff --git a/src/App/Osu/OsuSkin.cpp b/src/App/Osu/OsuSkin.cpp
+index cd71da7..e5d2be4 100644
+--- a/src/App/Osu/OsuSkin.cpp
++++ b/src/App/Osu/OsuSkin.cpp
+@@ -452,7 +452,7 @@ void OsuSkin::load()
+ 	// skin ini
+ 	randomizeFilePath();
+ 	m_sSkinIniFilePath = m_sFilePath;
+-	UString defaultSkinIniFilePath = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : "./materials/");
++	UString defaultSkinIniFilePath = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : MCENGINE_DATA_DIR "/materials/");
+ 	defaultSkinIniFilePath.append(OSUSKIN_DEFAULT_SKIN_PATH);
+ 	defaultSkinIniFilePath.append("skin.ini");
+ 	m_sSkinIniFilePath.append("skin.ini");
+@@ -1314,13 +1314,13 @@ void OsuSkin::checkLoadImage(Image **addressOfPointer, UString skinElementName,
+ 
+ 	// NOTE: only the default skin is loaded with a resource name (it must never be unloaded by other instances), and it is NOT added to the resources vector
+ 
+-	UString defaultFilePath1 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : "./materials/");
++	UString defaultFilePath1 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : MCENGINE_DATA_DIR "/materials/");
+ 	defaultFilePath1.append(OSUSKIN_DEFAULT_SKIN_PATH);
+ 	defaultFilePath1.append(skinElementName);
+ 	defaultFilePath1.append("@2x.");
+ 	defaultFilePath1.append(fileExtension);
+ 
+-	UString defaultFilePath2 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : "./materials/");
++	UString defaultFilePath2 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : MCENGINE_DATA_DIR "/materials/");
+ 	defaultFilePath2.append(OSUSKIN_DEFAULT_SKIN_PATH);
+ 	defaultFilePath2.append(skinElementName);
+ 	defaultFilePath2.append(".");
+@@ -1467,12 +1467,12 @@ void OsuSkin::checkLoadSound(Sound **addressOfPointer, UString skinElementName,
+ 
+ 	// load default skin
+ 
+-	UString defaultpath1 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : "./materials/");
++	UString defaultpath1 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : MCENGINE_DATA_DIR "/materials/");
+ 	defaultpath1.append(OSUSKIN_DEFAULT_SKIN_PATH);
+ 	defaultpath1.append(skinElementName);
+ 	defaultpath1.append(".wav");
+ 
+-	UString defaultpath2 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : "./materials/");
++	UString defaultpath2 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : MCENGINE_DATA_DIR "/materials/");
+ 	defaultpath2.append(OSUSKIN_DEFAULT_SKIN_PATH);
+ 	defaultpath2.append(skinElementName);
+ 	defaultpath2.append(".mp3");
+diff --git a/src/App/Osu/OsuUpdateHandler.cpp b/src/App/Osu/OsuUpdateHandler.cpp
+index 80862ef..422d39f 100644
+--- a/src/App/Osu/OsuUpdateHandler.cpp
++++ b/src/App/Osu/OsuUpdateHandler.cpp
+@@ -393,7 +393,7 @@ void OsuUpdateHandler::_installUpdate(UString zipFilePath)
+ 	}
+ 
+ 	// repair/create missing/new dirs
+-	UString cfgDir = "cfg/";
++	UString cfgDir = MCENGINE_DATA_DIR "cfg/";
+ 	bool cfgDirExists = env->directoryExists(cfgDir);
+ 	for (int i=0; i<dirs.size(); i++)
+ 	{
+diff --git a/src/App/Osu/OsuVR.cpp b/src/App/Osu/OsuVR.cpp
+index b726a94..d18f7af 100644
+--- a/src/App/Osu/OsuVR.cpp
++++ b/src/App/Osu/OsuVR.cpp
+@@ -974,7 +974,7 @@ void OsuVR::save()
+ {
+ 	debugLog("Osu: Saving VR config file ...\n");
+ 
+-	UString userVRConfigFile = "cfg/";
++	UString userVRConfigFile = MCENGINE_DATA_DIR "cfg/";
+ 	userVRConfigFile.append(OSUVR_CONFIG_FILE_NAME);
+ 	userVRConfigFile.append(".cfg");
+ 

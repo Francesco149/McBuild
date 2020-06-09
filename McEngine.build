@@ -1,0 +1,223 @@
+# change project name to the name of your app
+project('McEngine', 'cpp', default_options : [ 'cpp_std=c++11' ])
+
+app = get_option('app')
+subdir('src/App/' / app)
+
+extra_args = app_extra_args
+libraries = app_libraries
+find_libraries = app_find_libraries # libraries that have no meson spec
+
+app_data_dir = get_option('datadir') / app / ''
+datadirs = [ 'materials', 'fonts', 'sounds', 'shaders', 'cfg' ]
+
+extra_args += [
+  '-Wno-sign-compare', '-Wno-unused-local-typedefs', '-Wno-reorder', '-Wno-switch', '-fpermissive',
+  '-DMCENGINE_APP=' + app, '-DMCENGINE_APP_HEADER="' + app + '.h"'
+]
+
+foreach feature : get_option('features')
+  upperfeature = feature.to_upper().underscorify()
+  extra_args += [ '-DMCENGINE_FEATURE_' + upperfeature ]
+  if feature == 'pthreads'
+    libraries += [ 'threads' ]
+  elif feature == 'opengl'
+    libraries += [ 'glew' ]
+    extra_args += [ '-DMCENGINE_USE_SYSTEM_GLEW=1' ]
+    libraries += [ 'gl' ]
+  elif feature == 'opengles'
+    libraries += [ 'gl' ]
+  elif feature == 'networking'
+    libraries += [ 'libcurl', 'libenet' ]
+    extra_args += [ '-DMCENGINE_USE_SYSTEM_CURL=1' ]
+  elif feature == 'sound'
+    find_libraries += [ 'bass', 'bass_fx' ]
+  elif feature == 'opencl'
+    libraries += [ 'OpenCL' ]
+    extra_args += [ '-DMCENGINE_USE_SYSTEM_OPENCL=1' ]
+  elif feature == 'squirrel'
+    find_libraries += [ feature ]
+  elif feature == 'sdl_mixer'
+    libraries += [ 'SDL2_mixer' ]
+  elif feature == 'discord'
+    find_libraries += [ 'discord-rpc' ]
+  elif [ 'vulkan', 'openvr' ].contains(feature)
+    libraries += [ feature ]
+    extra_args += [ '-DMCENGINE_USE_SYSTEM_' + upperfeature + '=1' ]
+  endif
+endforeach
+
+libraries += [ 'freetype2', 'X11', 'libjpeg', 'xi' ]
+extra_args += [
+  '-DMCENGINE_USE_SYSTEM_FREETYPE=1',
+  '-DMCENGINE_DATA_DIR="' + get_option('prefix') / app_data_dir + '"'
+]
+
+includes = [
+  'App/' + app,
+  'App',
+  'Engine',
+  'Engine/Main',
+  'Engine/Input',
+  'Engine/Platform',
+  'Engine/Renderer',
+  'GUI',
+  'GUI/Windows',
+  'Util',
+]
+
+sources = [
+  'Util/Rect.cpp',
+  'Util/Matrices.cpp',
+  'Util/MD5.cpp',
+  'Util/JSONValue.cpp',
+  'Util/AES.cpp',
+  'Util/lodepng.cpp',
+  'Util/Quaternion.cpp',
+  'Util/JSON.cpp',
+  'Util/UString.cpp',
+  'GUI/CBaseUIElement.cpp',
+  'GUI/CBaseUIContainerBase.cpp',
+  'GUI/Windows/ConsoleBox.cpp',
+  'GUI/Windows/Console.cpp',
+  'GUI/CBaseUITextField.cpp',
+  'GUI/CBaseUIContainerBox.cpp',
+  'GUI/CBaseUIContainerHorizontalBox.cpp',
+  'GUI/CBaseUIButton.cpp',
+  'GUI/CBaseUIBoxShadow.cpp',
+  'GUI/CBaseUIContainerVerticalBox.cpp',
+  'GUI/CBaseUITextbox.cpp',
+  'GUI/CBaseUICheckbox.cpp',
+  'GUI/GaussianBlurKernel.cpp',
+  'GUI/CWindowManager.cpp',
+  'GUI/CBaseUIScrollView.cpp',
+  'GUI/CBaseUISlider.cpp',
+  'GUI/CBaseUICanvas.cpp',
+  'GUI/CBaseUIImageButton.cpp',
+  'GUI/CBaseUILabel.cpp',
+  'GUI/CBaseUIContainer.cpp',
+  'GUI/CBaseUIWindow.cpp',
+  'GUI/CBaseUIImage.cpp',
+  'Engine/Input/OpenVRController.cpp',
+  'Engine/Input/Gamepad.cpp',
+  'Engine/Input/Keyboard.cpp',
+  'Engine/Input/KeyboardEvent.cpp',
+  'Engine/Input/Mouse.cpp',
+  'Engine/Image.cpp',
+  'Engine/NetworkHandler.cpp',
+  'Engine/OpenVRInterface.cpp',
+  'Engine/ConVar.cpp',
+  'Engine/SquirrelInterface.cpp',
+  'Engine/Main/main_Linux.cpp',
+  'Engine/Main/main_OSX_sdl.cpp',
+  'Engine/Main/main_SDL.cpp',
+  'Engine/Main/main_Horizon.cpp',
+  'Engine/Main/main_Windows.cpp',
+  'Engine/Main/main_OSX_cpp.cpp',
+  'Engine/Engine.cpp',
+  'Engine/TextureAtlas.cpp',
+  'Engine/OpenCLInterface.cpp',
+  'Engine/RenderTarget.cpp',
+  'Engine/Camera.cpp',
+  'Engine/Renderer/OpenGL3VertexArrayObject.cpp',
+  'Engine/Renderer/OpenGLImage.cpp',
+  'Engine/Renderer/OpenGLShader.cpp',
+  'Engine/Renderer/DirectX11Image.cpp',
+  'Engine/Renderer/SWGraphicsInterface.cpp',
+  'Engine/Renderer/VulkanGraphicsInterface.cpp',
+  'Engine/Renderer/NullImage.cpp',
+  'Engine/Renderer/DirectX11RenderTarget.cpp',
+  'Engine/Renderer/SWImage.cpp',
+  'Engine/Renderer/SWShader.cpp',
+  'Engine/Renderer/DirectX11Interface.cpp',
+  'Engine/Renderer/OpenGLRenderTarget.cpp',
+  'Engine/Renderer/OpenGLES2Interface.cpp',
+  'Engine/Renderer/OpenGL3Interface.cpp',
+  'Engine/Renderer/OpenGLES2Shader.cpp',
+  'Engine/Renderer/OpenGLVertexArrayObject.cpp',
+  'Engine/Renderer/NullRenderTarget.cpp',
+  'Engine/Renderer/OpenGLLegacyInterface.cpp',
+  'Engine/Renderer/DirectX11Shader.cpp',
+  'Engine/Renderer/NullGraphicsInterface.cpp',
+  'Engine/Renderer/NullShader.cpp',
+  'Engine/Renderer/OpenGLES2VertexArrayObject.cpp',
+  'Engine/Renderer/SWRenderTarget.cpp',
+  'Engine/Environment.cpp',
+  'Engine/SteamworksInterface.cpp',
+  'Engine/VulkanInterface.cpp',
+  'Engine/VertexArrayObject.cpp',
+  'Engine/Resource.cpp',
+  'Engine/SoundEngine.cpp',
+  'Engine/Sound.cpp',
+  'Engine/Platform/HorizonTimer.cpp',
+  'Engine/Platform/WinSDLEnvironment.cpp',
+  'Engine/Platform/MacOSGLLegacyInterface.cpp',
+  'Engine/Platform/SDLGLES2Interface.cpp',
+  'Engine/Platform/WinEnvironment.cpp',
+  'Engine/Platform/WinGLLegacyInterface.cpp',
+  'Engine/Platform/HorizonSDLEnvironment.cpp',
+  'Engine/Platform/WinSWGraphicsInterface.cpp',
+  'Engine/Platform/MacOSEnvironment.cpp',
+  'Engine/Platform/WinFile.cpp',
+  'Engine/Platform/MacOSSDLEnvironment.cpp',
+  'Engine/Platform/WinContextMenu.cpp',
+  'Engine/Platform/File.cpp',
+  'Engine/Platform/WinGL3Interface.cpp',
+  'Engine/Platform/NullContextMenu.cpp',
+  'Engine/Platform/LinuxGLLegacyInterface.cpp',
+  'Engine/Platform/LinuxTimer.cpp',
+  'Engine/Platform/XInputGamepad.cpp',
+  'Engine/Platform/WinSDLGLES2Interface.cpp',
+  'Engine/Platform/LinuxEnvironment.cpp',
+  'Engine/Platform/Timer.cpp',
+  'Engine/Platform/NullEnvironment.cpp',
+  'Engine/Platform/SDLEnvironment.cpp',
+  'Engine/Platform/HorizonThread.cpp',
+  'Engine/Platform/Thread.cpp',
+  'Engine/Platform/WinTimer.cpp',
+  'Engine/Platform/LinuxContextMenu.cpp',
+  'Engine/Platform/SDLGLLegacyInterface.cpp',
+  'Engine/Platform/MacOSTimer.cpp',
+  'Engine/ContextMenu.cpp',
+  'Engine/Font.cpp',
+  'Engine/AnimationHandler.cpp',
+  'Engine/Graphics.cpp',
+  'Engine/Shader.cpp',
+  'Engine/DiscordInterface.cpp',
+  'Engine/ResourceManager.cpp',
+]
+
+libs = []
+inc = []
+src = []
+cc = meson.get_compiler('cpp')
+
+foreach lib : libraries
+  libs += dependency(lib)
+endforeach
+
+foreach lib : find_libraries
+  libs += cc.find_library(lib)
+endforeach
+
+foreach dir : includes
+  inc += 'src' / dir
+endforeach
+
+foreach file : sources
+  src += 'src' / file
+endforeach
+
+foreach file : app_sources
+  src += 'src/App' / app / file
+endforeach
+
+foreach datadir : datadirs
+  install_subdir('build' / datadir, install_dir : app_data_dir)
+endforeach
+
+executable(app, src,
+  dependencies : libs,
+  cpp_args : extra_args,
+  include_directories : include_directories(inc),
+  install : true)

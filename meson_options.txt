@@ -1,0 +1,5 @@
+option('app', type : 'string', value : 'Osu')
+option('features', type : 'array',
+  choices : [ 'multithreading', 'pthreads', 'opengl', 'opengles', 'networking', 'sound',
+    'opencl', 'vulkan', 'openvr', 'squirrel', 'sdl-mixer', 'discord' ],
+  value : [ 'multithreading', 'pthreads', 'opengl', 'sound' ])
