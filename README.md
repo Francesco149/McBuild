@@ -14,14 +14,15 @@ install meson with your distro's package manager. or install python and do
 
 install the following libraries
 
-* miniz (McOsu only)
+* [miniz](https://github.com/richgel999/miniz) (McOsu only)
 * glew
 * freetype2
 * X11
 * libjpeg
 * xi
-* bass
-* bass\_fx
+* [bass](https://www.un4seen.com/download.php?bass24-linux)
+* [bass\_fx](https://www.un4seen.com/download.php?z/0/bass_fx24-linux)
+* SDL2
 
 
 ```sh

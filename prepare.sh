@@ -37,7 +37,7 @@ olddir="$(pwd)"
 cd "${abspath}/McEngine/McEngine/build" || exit
 
 # edit this meson invokation with your options
-meson --prefix="${abspath}/McOsu" "$@" .. && ninja || exit
+meson setup --prefix="${abspath}/McOsu" "$@" .. && ninja || exit
 EOF
 
 cat > install.sh << "EOF"

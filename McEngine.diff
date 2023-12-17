@@ -1,8 +1,18 @@
+diff --git a/.gitignore b/.gitignore
+index 479cab1..3612740 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1 +1,5 @@
+ /McEngine/.settings/language.settings.xml
++/McEngine/build/
++/McEngine/meson.build
++/McEngine/meson_options.txt
++/McEngine/src/App/Osu
 diff --git a/McEngine/src/Engine/Engine.cpp b/McEngine/src/Engine/Engine.cpp
-index 8b9c1c3..ac1627b 100644
+index 310f1be..3586646 100644
 --- a/McEngine/src/Engine/Engine.cpp
 +++ b/McEngine/src/Engine/Engine.cpp
-@@ -44,8 +44,12 @@
+@@ -45,10 +45,14 @@
  //	Include App here  //
  //********************//
  
@@ -10,27 +20,33 @@ index 8b9c1c3..ac1627b 100644
 +#include MCENGINE_APP_HEADER
 +#else
  //#include "Osu.h"
+ //#include "GUICoherenceMode.h"
+ //#include "Asteroids.h"
  #include "FrameworkTest.h"
 +#endif
  
  
  
-@@ -258,9 +262,13 @@ void Engine::loadApp()
- 	//	Load App here  //
- 	//*****************//
+@@ -327,6 +331,9 @@ void Engine::loadApp()
+ 		//	Load App here  //
+ 		//*****************//
  
 +#ifdef MCENGINE_APP
-+	m_app = new MCENGINE_APP();
++		m_app = new MCENGINE_APP();
 +#else
- 	//m_app = new Osu();
+ 		//m_app = new Osu();
  
- 	m_app = new FrameworkTest();
+ 		//m_app = new GUICoherenceMode();
+@@ -334,6 +341,7 @@ void Engine::loadApp()
+ 		//m_app = new Asteroids();
+ 
+ 		m_app = new FrameworkTest();
 +#endif
  
  
  
 diff --git a/McEngine/src/Engine/Font.cpp b/McEngine/src/Engine/Font.cpp
-index f40aa73..dfbf4d1 100644
+index 6875f10..c8ff475 100644
 --- a/McEngine/src/Engine/Font.cpp
 +++ b/McEngine/src/Engine/Font.cpp
 @@ -13,11 +13,19 @@
@@ -70,7 +86,7 @@ index cb1ed1b..ad302db 100644
  #endif
  
 diff --git a/McEngine/src/Engine/Main/EngineFeatures.h b/McEngine/src/Engine/Main/EngineFeatures.h
-index 93bb55e..485bd7d 100644
+index 1f42a84..4dfdecb 100644
 --- a/McEngine/src/Engine/Main/EngineFeatures.h
 +++ b/McEngine/src/Engine/Main/EngineFeatures.h
 @@ -11,17 +11,17 @@
@@ -104,7 +120,7 @@ index 93bb55e..485bd7d 100644
  /*
   * BASS WASAPI sound (Windows only)
 diff --git a/McEngine/src/Engine/NetworkHandler.cpp b/McEngine/src/Engine/NetworkHandler.cpp
-index 1e3f09f..c391e12 100644
+index 4ab08c3..aa8f7fb 100644
 --- a/McEngine/src/Engine/NetworkHandler.cpp
 +++ b/McEngine/src/Engine/NetworkHandler.cpp
 @@ -14,7 +14,11 @@
@@ -120,7 +136,7 @@ index 1e3f09f..c391e12 100644
  #endif
  
 diff --git a/McEngine/src/Engine/OpenCLInterface.cpp b/McEngine/src/Engine/OpenCLInterface.cpp
-index 99f5563..9f28aab 100644
+index 907acbb..6760a3e 100644
 --- a/McEngine/src/Engine/OpenCLInterface.cpp
 +++ b/McEngine/src/Engine/OpenCLInterface.cpp
 @@ -15,7 +15,11 @@
@@ -152,10 +168,10 @@ index 587fdca..491478b 100644
  #endif
  
 diff --git a/McEngine/src/Engine/OpenVRInterface.cpp b/McEngine/src/Engine/OpenVRInterface.cpp
-index 70ebfe7..f4409c0 100644
+index 2ebbc4c..5d75486 100644
 --- a/McEngine/src/Engine/OpenVRInterface.cpp
 +++ b/McEngine/src/Engine/OpenVRInterface.cpp
-@@ -1045,6 +1045,7 @@ void OpenVRInterface::renderScene(Graphics *g,  Matrix4 &matCurrentEye, Matrix4
+@@ -814,6 +814,7 @@ void OpenVRInterface::renderScene(Graphics *g,  Matrix4 &matCurrentEye, Matrix4
  	///g->setCulling(true);
  	*/
  
@@ -163,7 +179,7 @@ index 70ebfe7..f4409c0 100644
  	// debug controllers
  	const bool bIsInputCapturedByAnotherProcess = m_pHMD->IsInputFocusCapturedByAnotherProcess();
  	if (vr_debug_controllers.getBool())
-@@ -1063,6 +1064,10 @@ void OpenVRInterface::renderScene(Graphics *g,  Matrix4 &matCurrentEye, Matrix4
+@@ -832,6 +833,10 @@ void OpenVRInterface::renderScene(Graphics *g,  Matrix4 &matCurrentEye, Matrix4
  			m_controllerAxisShader->disable();
  		}
  	}
@@ -174,7 +190,7 @@ index 70ebfe7..f4409c0 100644
  
  	// internal rendermodel rendering (all connected tracked devices which have models)
  	m_renderModelShader->enable();
-@@ -1704,7 +1709,11 @@ void OpenVRInterface::showKeyboardEx(UString description, UString text)
+@@ -1360,7 +1365,11 @@ void OpenVRInterface::showKeyboardEx(UString description, UString text)
  
  #if defined(MCENGINE_FEATURE_OPENVR)
  
@@ -186,7 +202,7 @@ index 70ebfe7..f4409c0 100644
  
  	if (res != vr::EVROverlayError::VROverlayError_None)
  		debugLog("OpenVR Error: VROverlay::ShowKeyboard() error %i!!!\n", (int)res);
-@@ -1788,7 +1797,11 @@ bool OpenVRInterface::hasInputFocus()
+@@ -1444,7 +1453,11 @@ bool OpenVRInterface::hasInputFocus()
  {
  #if defined(MCENGINE_FEATURE_OPENVR)
  
@@ -199,7 +215,7 @@ index 70ebfe7..f4409c0 100644
  
  #else
  
-@@ -1814,8 +1827,10 @@ bool OpenVRInterface::isLIVReady()
+@@ -1457,8 +1470,10 @@ bool OpenVRInterface::hasInputFocus()
  
  void OpenVRInterface::updateControllerAxes()
  {
@@ -210,7 +226,7 @@ index 70ebfe7..f4409c0 100644
  
  	std::vector<float> vertdataarray;
  
-@@ -2156,7 +2171,9 @@ bool OpenVRInterface::updateMatrixPoses()
+@@ -1791,7 +1806,9 @@ bool OpenVRInterface::updateMatrixPoses()
  			// update controller matrices
  			if (isConnected && isController)
  			{
@@ -220,7 +236,7 @@ index 70ebfe7..f4409c0 100644
  				{
  					if (nDevice == m_pHMD->GetTrackedDeviceIndexForControllerRole(OpenVRController::roleIdToOpenVR(m_controllerLeft->getRole())))
  						m_controllerLeft->updateMatrixPose(m_rmat4DevicePose[nDevice]);
-@@ -2354,7 +2371,7 @@ void OpenVRInterface::saveFakeCamera()
+@@ -1921,7 +1938,7 @@ void OpenVRInterface::saveFakeCamera()
  	vr_spectator_camera_position.setValue(UString::format("%f %f %f", m_fakeCamera->getPos().x, m_fakeCamera->getPos().y, m_fakeCamera->getPos().z));
  	vr_spectator_camera_rotation.setValue(UString::format("%f %f %f", m_fakeCamera->getYaw(), m_fakeCamera->getPitch(), m_fakeCamera->getRoll()));
  
@@ -230,7 +246,7 @@ index 70ebfe7..f4409c0 100644
  	{
  		debugLog("OpenVRInterface::saveFakeCamera() failed!\n");
 diff --git a/McEngine/src/Engine/OpenVRInterface.h b/McEngine/src/Engine/OpenVRInterface.h
-index ee173b7..2d1ee95 100644
+index 23a5d80..f2013a9 100644
 --- a/McEngine/src/Engine/OpenVRInterface.h
 +++ b/McEngine/src/Engine/OpenVRInterface.h
 @@ -17,7 +17,11 @@
@@ -246,27 +262,31 @@ index ee173b7..2d1ee95 100644
  #endif
  
 diff --git a/McEngine/src/Engine/Platform/OpenGLHeaders.h b/McEngine/src/Engine/Platform/OpenGLHeaders.h
-index 1244e49..6b83a59 100644
+index b8ee791..5374808 100644
 --- a/McEngine/src/Engine/Platform/OpenGLHeaders.h
 +++ b/McEngine/src/Engine/Platform/OpenGLHeaders.h
-@@ -29,8 +29,12 @@
+@@ -29,11 +29,16 @@
  
  #ifdef __linux__
  
 +#ifdef MCENGINE_USE_SYSTEM_GLEW
 +#include <GL/glew.h>
++#include <GL/glxew.h>
 +#else
  #define GLEW_STATIC
- #include <glew.h>
-+#endif
+ #include <GL/glew.h>
  #include <GL/gl.h>
  #include <GL/glx.h>
  #include <GL/glu.h>
++#endif
+ 
+ #endif
+ 
 diff --git a/McEngine/src/Engine/ResourceManager.cpp b/McEngine/src/Engine/ResourceManager.cpp
-index f1c3ff4..4c69f55 100644
+index 76b34e0..2236874 100644
 --- a/McEngine/src/Engine/ResourceManager.cpp
 +++ b/McEngine/src/Engine/ResourceManager.cpp
-@@ -59,10 +59,10 @@ const char *ResourceManager::PATH_DEFAULT_SHADERS = "romfs:/shaders/";
+@@ -62,10 +62,10 @@ const char *ResourceManager::PATH_DEFAULT_SHADERS = "romfs:/shaders/";
  
  #else
  
@@ -282,12 +302,12 @@ index f1c3ff4..4c69f55 100644
  #endif
  
 diff --git a/McEngine/src/Engine/ResourceManager.h b/McEngine/src/Engine/ResourceManager.h
-index c2132df..0f3d1b7 100644
+index 457a0bd..81a1212 100644
 --- a/McEngine/src/Engine/ResourceManager.h
 +++ b/McEngine/src/Engine/ResourceManager.h
 @@ -18,6 +18,10 @@
- #include "TextureAtlas.h"
- #include "VertexArrayObject.h"
+ 
+ class ConVar;
  
 +#ifndef MCENGINE_DATA_DIR
 +#define MCENGINE_DATA_DIR
@@ -297,10 +317,10 @@ index c2132df..0f3d1b7 100644
  
  class ResourceManager
 diff --git a/McEngine/src/Engine/SoundEngine.cpp b/McEngine/src/Engine/SoundEngine.cpp
-index dd320d9..fc88662 100644
+index 7a4ee69..e319c1f 100644
 --- a/McEngine/src/Engine/SoundEngine.cpp
 +++ b/McEngine/src/Engine/SoundEngine.cpp
-@@ -18,6 +18,10 @@
+@@ -63,6 +63,10 @@ public:
  #ifdef MCENGINE_FEATURE_SOUND
  
  #include <bass.h>
@@ -309,7 +329,7 @@ index dd320d9..fc88662 100644
 +#define BASS_CONFIG_MP3_OLDGAPS 68
 +#endif
  
- #endif
+ #ifdef MCENGINE_FEATURE_MULTITHREADING
  
 diff --git a/McEngine/src/Engine/VulkanInterface.h b/McEngine/src/Engine/VulkanInterface.h
 index 8e49080..f4cff5a 100644
@@ -328,12 +348,12 @@ index 8e49080..f4cff5a 100644
  #endif
  
 diff --git a/McEngine/src/GUI/Windows/Console.cpp b/McEngine/src/GUI/Windows/Console.cpp
-index 744f6d9..75e526d 100644
+index 56d3c7d..72177a2 100644
 --- a/McEngine/src/GUI/Windows/Console.cpp
 +++ b/McEngine/src/GUI/Windows/Console.cpp
 @@ -25,7 +25,7 @@
- #include "CBaseUIButton.h"
- #include "CBaseUILabel.h"
+ 
+ #endif
  
 -#define CFG_FOLDER "cfg/"
 +#define CFG_FOLDER MCENGINE_DATA_DIR "cfg/"
