@@ -1,8 +1,15 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..c2e1dfe
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1 @@
++/src/App/Osu/meson.build
 diff --git a/src/App/Osu/OsuOptionsMenu.cpp b/src/App/Osu/OsuOptionsMenu.cpp
-index 79c4f98..3f80ab2 100644
+index a298b69..c5598da 100644
 --- a/src/App/Osu/OsuOptionsMenu.cpp
 +++ b/src/App/Osu/OsuOptionsMenu.cpp
-@@ -2539,7 +2539,7 @@ void OsuOptionsMenu::onResolutionSelect()
+@@ -2682,7 +2682,7 @@ void OsuOptionsMenu::onResolutionSelect()
  
      // get custom resolutions
      std::vector<Vector2> customResolutions;
@@ -11,7 +18,7 @@ index 79c4f98..3f80ab2 100644
  	std::string curLine;
  	while (std::getline(customres, curLine))
  	{
-@@ -3726,7 +3726,7 @@ void OsuOptionsMenu::save()
+@@ -3959,7 +3959,7 @@ void OsuOptionsMenu::save()
  
  	debugLog("Osu: Saving user config file ...\n");
  
@@ -21,10 +28,10 @@ index 79c4f98..3f80ab2 100644
  	userConfigFile.append(".cfg");
  
 diff --git a/src/App/Osu/OsuSkin.cpp b/src/App/Osu/OsuSkin.cpp
-index cd71da7..e5d2be4 100644
+index 8883a02..7170321 100644
 --- a/src/App/Osu/OsuSkin.cpp
 +++ b/src/App/Osu/OsuSkin.cpp
-@@ -452,7 +452,7 @@ void OsuSkin::load()
+@@ -468,7 +468,7 @@ void OsuSkin::load()
  	// skin ini
  	randomizeFilePath();
  	m_sSkinIniFilePath = m_sFilePath;
@@ -33,7 +40,7 @@ index cd71da7..e5d2be4 100644
  	defaultSkinIniFilePath.append(OSUSKIN_DEFAULT_SKIN_PATH);
  	defaultSkinIniFilePath.append("skin.ini");
  	m_sSkinIniFilePath.append("skin.ini");
-@@ -1314,13 +1314,13 @@ void OsuSkin::checkLoadImage(Image **addressOfPointer, UString skinElementName,
+@@ -1462,13 +1462,13 @@ void OsuSkin::checkLoadImage(Image **addressOfPointer, UString skinElementName,
  
  	// NOTE: only the default skin is loaded with a resource name (it must never be unloaded by other instances), and it is NOT added to the resources vector
  
@@ -49,21 +56,31 @@ index cd71da7..e5d2be4 100644
  	defaultFilePath2.append(OSUSKIN_DEFAULT_SKIN_PATH);
  	defaultFilePath2.append(skinElementName);
  	defaultFilePath2.append(".");
-@@ -1467,12 +1467,12 @@ void OsuSkin::checkLoadSound(Sound **addressOfPointer, UString skinElementName,
+@@ -1615,21 +1615,21 @@ void OsuSkin::checkLoadSound(Sound **addressOfPointer, UString skinElementName,
  
  	// load default skin
  
 -	UString defaultpath1 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : "./materials/");
-+	UString defaultpath1 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : MCENGINE_DATA_DIR "/materials/");
- 	defaultpath1.append(OSUSKIN_DEFAULT_SKIN_PATH);
- 	defaultpath1.append(skinElementName);
- 	defaultpath1.append(".wav");
++	UString defaultpath1 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : MCENGINE_DATA_DIR "./materials/");
+ 	{
+ 		defaultpath1.append(OSUSKIN_DEFAULT_SKIN_PATH);
+ 		defaultpath1.append(skinElementName);
+ 		defaultpath1.append(".wav");
+ 	}
  
 -	UString defaultpath2 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : "./materials/");
-+	UString defaultpath2 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : MCENGINE_DATA_DIR "/materials/");
- 	defaultpath2.append(OSUSKIN_DEFAULT_SKIN_PATH);
- 	defaultpath2.append(skinElementName);
- 	defaultpath2.append(".mp3");
++	UString defaultpath2 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : MCENGINE_DATA_DIR "./materials/");
+ 	{
+ 		defaultpath2.append(OSUSKIN_DEFAULT_SKIN_PATH);
+ 		defaultpath2.append(skinElementName);
+ 		defaultpath2.append(".mp3");
+ 	}
+ 
+-	UString defaultpath3 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : "./materials/");
++	UString defaultpath3 = UString(env->getOS() == Environment::OS::OS_HORIZON ? "romfs:/materials/" : MCENGINE_DATA_DIR "./materials/");
+ 	{
+ 		defaultpath3.append(OSUSKIN_DEFAULT_SKIN_PATH);
+ 		defaultpath3.append(skinElementName);
 diff --git a/src/App/Osu/OsuUpdateHandler.cpp b/src/App/Osu/OsuUpdateHandler.cpp
 index 80862ef..422d39f 100644
 --- a/src/App/Osu/OsuUpdateHandler.cpp
