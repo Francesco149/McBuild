@@ -69,8 +69,6 @@ includes = [
 sources = [
   'Util/lodepng.cpp',
   'Util/Rect.cpp',
-  'Util/JSONValue.cpp',
-  'Util/JSON.cpp',
   'Util/UString.cpp',
   'Util/Matrices.cpp',
   'Util/MD5.cpp',
