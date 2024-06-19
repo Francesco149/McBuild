@@ -72,7 +72,6 @@ sources = [
   'Util/UString.cpp',
   'Util/Matrices.cpp',
   'Util/MD5.cpp',
-  'Util/AES.cpp',
   'Util/Quaternion.cpp',
   'GUI/CBaseUIWindow.cpp',
   'GUI/CBaseUISlider.cpp',
