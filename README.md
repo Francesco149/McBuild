@@ -12,7 +12,7 @@ to fix headers
 install meson with your distro's package manager. or install python and do
 `python -m pip install --user meson`. you also need git
 
-install the following libraries
+install the following libraries (or if you use nix you can clone this repo and do `nix develop`)
 
 * [miniz](https://github.com/richgel999/miniz) (McOsu only)
 * glew
